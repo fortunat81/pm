@@ -11,6 +11,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
+import { LogOut } from "lucide-react";
 import { KanbanColumn } from "@/components/KanbanColumn";
 import { KanbanCardPreview } from "@/components/KanbanCardPreview";
 import { ChatSidebar } from "@/components/ChatSidebar";
@@ -262,9 +263,11 @@ export const KanbanBoard = ({
                   <button
                     type="button"
                     onClick={onLogout}
-                    className="rounded-full border border-[var(--stroke)] bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--gray-text)] transition hover:border-[var(--primary-blue)] hover:text-[var(--navy-dark)]"
+                    className="rounded-full border border-[var(--stroke)] bg-white p-2 text-[var(--gray-text)] transition hover:border-[var(--primary-blue)] hover:text-[var(--navy-dark)]"
+                    title="Log out"
+                    aria-label="Log out"
                   >
-                    Log out
+                    <LogOut size={18} />
                   </button>
                 )}
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { ArrowRight, Loader } from "lucide-react";
 
 type LoginFormProps = {
   onLogin: (username: string, password: string) => Promise<void>;
@@ -92,9 +93,19 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-full bg-[var(--secondary-purple)] px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:brightness-110 disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--secondary-purple)] px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:brightness-110 disabled:opacity-60"
             >
-              {isSubmitting ? "Signing in..." : "Sign in"}
+              {isSubmitting ? (
+                <>
+                  <Loader size={16} className="animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Sign in
+                  <ArrowRight size={16} />
+                </>
+              )}
             </button>
           </form>
 

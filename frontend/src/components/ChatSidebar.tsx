@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import clsx from "clsx";
+import { Send, Sparkles } from "lucide-react";
 import { api, ApiError, type ChatMessage } from "@/lib/api";
 import type { BoardData } from "@/lib/kanban";
 
@@ -86,7 +87,7 @@ export const ChatSidebar = ({
   return (
     <aside className="flex h-full flex-col overflow-hidden rounded-3xl border border-[var(--stroke)] bg-[var(--surface-strong)] shadow-[var(--shadow)]">
       <header className="flex items-center gap-3 border-b border-[var(--stroke)] px-5 py-4">
-        <div className="h-2.5 w-2.5 rounded-full bg-[var(--accent-yellow)]" />
+        <Sparkles size={20} className="text-[var(--secondary-purple)]" />
         <div>
           <h2 className="font-display text-lg font-semibold text-[var(--navy-dark)]">
             AI Assistant
@@ -139,9 +140,11 @@ export const ChatSidebar = ({
         <button
           type="submit"
           disabled={isSending || !draft.trim()}
-          className="rounded-full bg-[var(--secondary-purple)] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-full bg-[var(--secondary-purple)] p-2 text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+          title="Send message"
+          aria-label="Send message"
         >
-          Send
+          <Send size={18} />
         </button>
       </form>
     </aside>

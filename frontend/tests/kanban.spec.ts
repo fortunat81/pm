@@ -98,10 +98,10 @@ test("adds a card to a column and it persists after reload", async ({
 }) => {
   await login(page);
   const firstColumn = page.locator('[data-testid^="column-"]').first();
-  await firstColumn.getByRole("button", { name: /add a card/i }).click();
+  await firstColumn.getByRole("button", { name: /add/i }).first().click();
   await firstColumn.getByPlaceholder("Card title").fill("Playwright card");
   await firstColumn.getByPlaceholder("Details").fill("Added via e2e.");
-  await firstColumn.getByRole("button", { name: /add card/i }).click();
+  await firstColumn.getByRole("button", { name: /^add$/i }).click();
   await expect(firstColumn.getByText("Playwright card")).toBeVisible();
 
   // Reload: the card should still be present because it is persisted server-side.

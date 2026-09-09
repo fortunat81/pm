@@ -76,8 +76,9 @@ describe("KanbanBoard", () => {
   it("adds a card and persists", async () => {
     render(<KanbanBoard />);
     const column = await screen.findByTestId("column-col-b");
+    // Click the "Add card" button (closed form button) to open the form
     await userEvent.click(
-      within(column).getByRole("button", { name: /add a card/i })
+      within(column).getByRole("button", { name: /add/i })
     );
     await userEvent.type(
       within(column).getByPlaceholderText(/card title/i),
@@ -88,7 +89,7 @@ describe("KanbanBoard", () => {
       "Notes"
     );
     await userEvent.click(
-      within(column).getByRole("button", { name: /add card/i })
+      within(column).getByRole("button", { name: /^add$/i })
     );
 
     await waitFor(() => expect(api.saveBoard).toHaveBeenCalled());

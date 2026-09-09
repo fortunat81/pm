@@ -1,6 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
+import { Trash2 } from "lucide-react";
 import type { Card } from "@/lib/kanban";
 
 type KanbanCardProps = {
@@ -42,10 +43,11 @@ export const KanbanCard = ({ card, onDelete }: KanbanCardProps) => {
         <button
           type="button"
           onClick={() => onDelete(card.id)}
-          className="rounded-full border border-transparent px-2 py-1 text-xs font-semibold text-[var(--gray-text)] transition hover:border-[var(--stroke)] hover:text-[var(--navy-dark)]"
+          className="rounded-full border border-transparent p-1.5 text-[var(--gray-text)] transition hover:border-[var(--stroke)] hover:text-red-600"
           aria-label={`Delete ${card.title}`}
+          title="Delete card"
         >
-          Remove
+          <Trash2 size={16} />
         </button>
       </div>
     </article>
