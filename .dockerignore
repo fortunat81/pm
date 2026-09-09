@@ -1,0 +1,23 @@
+.git
+.env
+.venv
+__pycache__
+*.pyc
+*.pyo
+node_modules
+**/node_modules
+docs
+scripts
+backend/tests
+backend/.venv
+backend/__pycache__
+*.sqlite3
+kanban.db
+
+# Frontend: only source needed for the Docker build; derived dirs are rebuilt inside the image
+frontend/node_modules
+frontend/out
+frontend/.next
+frontend/test-results
+frontend/coverage
+frontend/playwright-report

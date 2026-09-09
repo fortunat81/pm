@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "db": "sqlite",
+  "approach": "JSON document per board. Each board row stores the full BoardData document (columns + cards) as a JSON string in a single `data` column. Chat history is a separate `chat_messages` table.",
+  "notes": [
+    "SQLite is the local database. The file is created automatically on startup if missing.",
+    "One board per signed-in user for the MVP. Enforced by a UNIQUE constraint on boards.user_id.",
+    "Multiple users are supported by the schema for future use; only 'user'/'password' exists today.",
+    "The JSON document shape matches the frontend BoardData and what the AI (Part 9) will emit/consume."
+  ],
+  "tables": [
+    {
+      "name": "users",
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primaryKey": true },
+        { "name": "username", "type": "TEXT", "nullable": false },
+        { "name": "password_hash", "type": "TEXT", "nullable": true },
+        { "name": "created_at", "type": "TEXT", "default": "CURRENT_TIMESTAMP" }
+      ],
+      "constraints": [
+        { "type": "unique", "columns": ["username"] }
+      ],
+      "notes": [
+        "MVP only has the hardcoded 'user' row; Part 6 seeds it and validates against this table.",
+        "password_hash is nullable for now (plaintext 'password' until a hashing decision is made)."
+      ]
+    },
+    {
+      "name": "boards",
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primaryKey": true },
+        { "name": "user_id", "type": "INTEGER", "nullable": false },
+        { "name": "title", "type": "TEXT", "nullable": false, "default": "My Board" },
+        { "name": "data", "type": "JSON", "nullable": false },
+        { "name": "created_at", "type": "TEXT", "default": "CURRENT_TIMESTAMP" },
+        { "name": "updated_at", "type": "TEXT", "default": "CURRENT_TIMESTAMP" }
+      ],
+      "constraints": [
+        { "type": "foreignKey", "columns": ["user_id"], "references": "users(id)" },
+        { "type": "unique", "columns": ["user_id"], "notes": "One board per user for MVP." }
+      ],
+      "indexes": [
+        { "name": "idx_boards_user_id", "columns": ["user_id"] }
+      ],
+      "notes": [
+        "data holds the whole BoardData JSON: { \"columns\": Column[], \"cards\": Record<string, Card> }.",
+        "Replaces the normalized columns/cards tables from the earlier origin/complete build.",
+        "Column order and card order are captured by the JSON arrays (Column.cardIds); no separate position columns."
+      ]
+    },
+    {
+      "name": "chat_messages",
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primaryKey": true },
+        { "name": "user_id", "type": "INTEGER", "nullable": false },
+        { "name": "board_id", "type": "INTEGER", "nullable": true },
+        { "name": "role", "type": "TEXT", "nullable": false },
+        { "name": "content", "type": "TEXT", "nullable": false },
+        { "name": "created_at", "type": "TEXT", "default": "CURRENT_TIMESTAMP" }
+      ],
+      "constraints": [
+        { "type": "foreignKey", "columns": ["user_id"], "references": "users(id)" },
+        { "type": "foreignKey", "columns": ["board_id"], "references": "boards(id)" }
+      ],
+      "indexes": [
+        { "name": "idx_chat_user_board", "columns": ["user_id", "board_id"] }
+      ],
+      "notes": [
+        "Stores full conversation history per user/board for the AI chat (Parts 8-10).",
+        "role is 'user' or 'assistant'. content is the message text (assistant may also return a board update)."
+      ]
+    }
+  ],
+  "exampleRows": {
+    "users": [
+      {
+        "id": 1,
+        "username": "user",
+        "password_hash": null,
+        "created_at": "2026-09-07 08:00:00"
+      }
+    ],
+    "boards": [
+      {
+        "id": 1,
+        "user_id": 1,
+        "title": "My Board",
+        "data": {
+          "columns": [
+            { "id": "col-backlog", "title": "Backlog", "cardIds": ["card-1", "card-2"] },
+            { "id": "col-discovery", "title": "Discovery", "cardIds": ["card-3"] },
+            { "id": "col-progress", "title": "In Progress", "cardIds": ["card-4", "card-5"] },
+            { "id": "col-review", "title": "Review", "cardIds": ["card-6"] },
+            { "id": "col-done", "title": "Done", "cardIds": ["card-7", "card-8"] }
+          ],
+          "cards": {
+            "card-1": { "id": "card-1", "title": "Align roadmap themes", "details": "Draft quarterly themes with impact statements and metrics." },
+            "card-2": { "id": "card-2", "title": "Gather customer signals", "details": "Review support tags, sales notes, and churn feedback." },
+            "card-3": { "id": "card-3", "title": "Prototype analytics view", "details": "Sketch initial dashboard layout and key drill-downs." },
+            "card-4": { "id": "card-4", "title": "Refine status language", "details": "Standardize column labels and tone across the board." },
+            "card-5": { "id": "card-5", "title": "Design card layout", "details": "Add hierarchy and spacing for scanning dense lists." },
+            "card-6": { "id": "card-6", "title": "QA micro-interactions", "details": "Verify hover, focus, and loading states." },
+            "card-7": { "id": "card-7", "title": "Ship marketing page", "details": "Final copy approved and asset pack delivered." },
+            "card-8": { "id": "card-8", "title": "Close onboarding sprint", "details": "Document release notes and share internally." }
+          }
+        },
+        "created_at": "2026-09-07 08:00:00",
+        "updated_at": "2026-09-07 08:00:00"
+      }
+    ],
+    "chat_messages": [
+      {
+        "id": 1,
+        "user_id": 1,
+        "board_id": 1,
+        "role": "user",
+        "content": "Add a card called 'Design review' to the Discovery column",
+        "created_at": "2026-09-07 08:05:00"
+      },
+      {
+        "id": 2,
+        "user_id": 1,
+        "board_id": 1,
+        "role": "assistant",
+        "content": "Done - added 'Design review' to Discovery.",
+        "created_at": "2026-09-07 08:05:01"
+      }
+    ]
+  }
+}
